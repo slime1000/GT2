@@ -11,6 +11,7 @@ public class MovementController : MonoBehaviour
     public float MoveSpeed;
     public InputActionAsset CharacterActionAsset;
     public Camera FirstPersonCamera;
+    public float MouseSensitivity = 5;
 
     private InputAction moveAction;
     private InputAction rotateAction;
@@ -50,12 +51,14 @@ public class MovementController : MonoBehaviour
     {
         moveValue = moveAction.ReadValue<Vector2>() * MoveSpeed * Time.deltaTime;
         rotateValue = rotateAction.ReadValue<Vector2>() * Time.deltaTime * 360;
+        rotateValue = Vector2.ClampMagnitude(rotateValue, MouseSensitivity);
         currentRotationAngle = new Vector3(currentRotationAngle.x - rotateValue.y, currentRotationAngle.y + rotateValue.x, 0);
         secondaryRotationAngle = new Vector3(0, currentRotationAngle.y + rotateValue.x, 0);
         currentRotationAngle = new Vector3(Mathf.Clamp(currentRotationAngle.x, -85, 85), currentRotationAngle.y, currentRotationAngle.z);
         FirstPersonCamera.transform.rotation = Quaternion.Euler(currentRotationAngle);
         characterController.transform.rotation = Quaternion.Euler(secondaryRotationAngle);
-        characterController.Move(new Vector3(moveValue.x, 0, moveValue.y));
+        Vector3 movementToApply = transform.TransformDirection(new Vector3(moveValue.x, 0, moveValue.y));
+        characterController.Move((movementToApply * Time.deltaTime));
 
     }
 
