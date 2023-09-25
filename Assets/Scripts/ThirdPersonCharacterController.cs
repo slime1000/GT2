@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonCharacterController : MonoBehaviour
 {
     public float moveMaxSpeed = 5;
     public float moveAcceleration = 10;
+    public float playerHealth = 5;
 
     public float jumpSpeed = 1;
     public float jumpMaxTime = 0.2f;
@@ -114,5 +117,20 @@ public class ThirdPersonCharacterController : MonoBehaviour
         bulletCopy.transform.position = transform.forward;
         bulletCopy.GetComponent<Bullet>().Shoot(new Vector3(currentHorizontalVelocity.x, 0, currentHorizontalVelocity.y));
         }
+
+
+
+	private void OnTriggerEnter(Collider collision)
+	{
+        if (collision.gameObject.tag == "enemy")
+        {
+            playerHealth = playerHealth-1;
+            Debug.Log("hit!");
+        }
+        if (playerHealth <= 0)
+        {
+            SceneManager.LoadScene("3D");
+        }
+	}
 
 }
