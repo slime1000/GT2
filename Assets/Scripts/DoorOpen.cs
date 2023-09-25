@@ -7,6 +7,7 @@ public class DoorOpen : MonoBehaviour
 
     public void OnDestroy()
     {
+
         Destroy(this.gameObject);
     }
 }

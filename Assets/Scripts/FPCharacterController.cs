@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(CharacterController))]
@@ -60,6 +61,14 @@ public class MovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+       if (Input.GetKeyDown(KeyCode.R))
+		{
+            SceneManager.LoadScene("Blockout");
+
+        }
+
+
         moveValue = moveAction.ReadValue<Vector2>() * MoveSpeed * Time.deltaTime;
         rotateValue = rotateAction.ReadValue<Vector2>() * Time.deltaTime * 360;
         rotateValue = Vector2.ClampMagnitude(rotateValue, MouseSensitivity);

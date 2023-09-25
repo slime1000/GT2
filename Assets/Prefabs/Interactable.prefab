@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3711891190197999796}
   - component: {fileID: 303178839915551069}
   - component: {fileID: 4016567321900134852}
+  - component: {fileID: 2460299600933641998}
   m_Layer: 0
   m_Name: Interactable
   m_TagString: Collectible
@@ -4888,7 +4889,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4dfdc939939fd8545b32bb6f22232816, type: 2}
+  - {fileID: 2100000, guid: cc27c5fca14aaac448715e6d3818f089, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4939,3 +4940,16 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &2460299600933641998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5057612839113509148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a820e4dc5e98474d8d0cdeedf6159ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RotationSpeed: 50

@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MyManager : MonoBehaviour
 {
     public static MyManager Instance;
 
     public int playerScore = 0;
-
+    public TextMeshProUGUI scoreText;
     void Start()
     {
         playerScore = 0;
+        
     }
     private void Awake()
     {
@@ -43,6 +45,7 @@ public class MyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        scoreText.text = playerScore.ToString() + "/5";
         if (playerScore >= 5)
         {
 

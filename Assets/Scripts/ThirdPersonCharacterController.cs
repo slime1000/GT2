@@ -23,7 +23,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     private float currentVerticalVelocity = 0;
 
-    public bullet bullet;
+    public Bullet bullet;
 
     private void Awake()
     {
@@ -112,6 +112,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
         GameObject bulletCopy = Instantiate(bullet.gameObject);
         bulletCopy.transform.position = transform.forward;
-        bulletCopy.GetComponent<bullet>().Shoot(new Vector3(currentHorizontalVelocity.x, 0, currentHorizontalVelocity.y));
+        bulletCopy.GetComponent<Bullet>().Shoot(new Vector3(currentHorizontalVelocity.x, 0, currentHorizontalVelocity.y));
+        }
 
 }
