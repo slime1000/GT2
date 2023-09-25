@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Blockout.unity
+    guid: 0659b64cc0af5424a9cb192288cf2723
   m_configObjects: {}
