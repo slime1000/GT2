@@ -9,6 +9,7 @@ public class UnityEventExample : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //when touching cube activate function
         OnCubeTouch.Invoke();
     }
 }

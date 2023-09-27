@@ -14,6 +14,7 @@ public class UIAnimManager : MonoBehaviour
 
     private void Awake()
     {
+        //making manager and if there are more than 1 fix that
         if (instance == null)
         {
             instance = this;
@@ -37,6 +38,7 @@ public class UIAnimManager : MonoBehaviour
 
     public void ShowInteractPrompt(bool showPrompt)
     {
+        //set ui on or off.
         animator.SetBool("showInteractionPrompt", showPrompt);
     }
 

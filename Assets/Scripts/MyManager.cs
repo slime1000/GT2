@@ -11,11 +11,13 @@ public class MyManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     void Start()
     {
+        //always set score to 0
         playerScore = 0;
         
     }
     private void Awake()
     {
+        //making manager, and managing if there already is one
         if (Instance == null)
 
         {
@@ -31,6 +33,7 @@ public class MyManager : MonoBehaviour
 
     private void OnDisable()
     {
+        //disabling instance
         if (Instance == this)
         {
             Instance = null;
@@ -38,6 +41,7 @@ public class MyManager : MonoBehaviour
     }
     public void AddScore ()
     {
+        //adding score on egg collect
         playerScore += 1;
         Debug.Log("Score Added");
     }
@@ -45,10 +49,9 @@ public class MyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //score ui update
         scoreText.text = playerScore.ToString() + "/5";
-        if (playerScore >= 5)
-        {
-
-        }
+       
+        
     }
 }

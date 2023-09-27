@@ -15,6 +15,7 @@ public class DoorScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //removes the end door when the player has collected all 5 eggs.
         if (MyManager.Instance.playerScore >= 5)
         {
             Destroy(this.gameObject);

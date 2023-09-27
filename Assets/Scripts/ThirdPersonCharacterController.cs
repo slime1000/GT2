@@ -18,18 +18,28 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     private bool jumpInputPressed = false;
     private bool isJumping = false;
+    private bool attackInputPressed = false;
+    public bool isShrunk = false;
+
+    private GameObject player;
 
     private CharacterController characterController;
 
     private Vector2 moveInput = Vector2.zero;
     private Vector2 currentHorizontalVelocity = Vector2.zero;
+    private Vector3 scaleChangeSmall, scaleChangeBig;
+    
 
     private float currentVerticalVelocity = 0;
 
-    public Bullet bullet;
 
     private void Awake()
     {
+        //setting player gameobject for scale
+        player = this.gameObject;
+        scaleChangeSmall = new Vector3(0.5f, 0.5f, 0.5f);
+        scaleChangeBig = new Vector3(1f, 1f, 1f);
+        //getting component
         characterController = GetComponent<CharacterController>();  
     }
 
@@ -38,7 +48,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
     {
         currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, moveInput * moveMaxSpeed, Time.deltaTime * moveAcceleration);
         Vector3 currentVelocity = new Vector3(currentHorizontalVelocity.x, currentVerticalVelocity, currentHorizontalVelocity.y);
-
+        //gravity
         if (isJumping == false)
         {
             currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
@@ -50,6 +60,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
         }
         else
         {
+            //jump height
             jumpTimer += Time.deltaTime;
 
             if (jumpTimer >= jumpMaxTime)
@@ -58,7 +69,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
             }
         }
 
-
+        //direction facing
         Vector3 horizontalDirection = Vector3.Scale(currentVelocity, new Vector3(1, 0, 1));
         if (currentVelocity.magnitude > 0.0001)
         {
@@ -72,11 +83,13 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
+        //setting move input
         moveInput = value.Get<Vector2>();
     }
 
     public void OnJump(InputValue value)
     {
+        //jumping
         jumpInputPressed = value.Get<float>() > 0;
 
         if (jumpInputPressed)
@@ -100,28 +113,34 @@ public class ThirdPersonCharacterController : MonoBehaviour
     }
 
 
-    public void OnAttack()
+    public void OnAttack(InputValue value)
     {
-        Collider[] overlapItems = Physics.OverlapBox(transform.position, Vector3.one);
-
-        if (overlapItems.Length > 0)
+        //I am making the "attack" a change in the player's size.
+        attackInputPressed = value.Get<float>() > 0;
+       if(attackInputPressed)
         {
-            foreach (Collider item in overlapItems)
+            Debug.Log("pressed!");
+            if(isShrunk == false)
             {
-                Vector3 direction = item.transform.position - transform.position;
-                item.SendMessage("OnPlayerAttack", direction, SendMessageOptions.DontRequireReceiver);
+                player.transform.localScale = scaleChangeSmall;
+                Debug.Log("shrunk!");
+                isShrunk = true;
+            }
+            else if(isShrunk == true)
+            {
+                player.transform.localScale = scaleChangeBig;
+                Debug.Log("big!");
+                isShrunk = false;
             }
         }
-
-        GameObject bulletCopy = Instantiate(bullet.gameObject);
-        bulletCopy.transform.position = transform.forward;
-        bulletCopy.GetComponent<Bullet>().Shoot(new Vector3(currentHorizontalVelocity.x, 0, currentHorizontalVelocity.y));
+       
         }
 
 
 
 	private void OnTriggerEnter(Collider collision)
 	{
+        //taking damage and restarting
         if (collision.gameObject.tag == "enemy")
         {
             playerHealth = playerHealth-1;

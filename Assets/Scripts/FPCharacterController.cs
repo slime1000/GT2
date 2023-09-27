@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class MovementController : MonoBehaviour
 {
+    //lotta variables
     public UnityEvent FiveEggs;
     public UnityEvent OnEggTouch;
     public float MoveSpeed;
@@ -33,6 +34,7 @@ public class MovementController : MonoBehaviour
     private bool isJumping = false;
 
 
+    //enable and disable action map
     private void OnEnable()
     {
         CharacterActionAsset.FindActionMap("Gameplay").Enable();
@@ -51,7 +53,9 @@ public class MovementController : MonoBehaviour
 
     void Awake()
     {
+        //lock mouse
         Cursor.lockState = CursorLockMode.Locked;
+        //get action map and find the 3 actions
         characterController = GetComponent<CharacterController>();
 
         moveAction = CharacterActionAsset.FindActionMap("Gameplay").FindAction("Move");
@@ -61,14 +65,14 @@ public class MovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //restart
        if (Input.GetKeyDown(KeyCode.R))
 		{
             SceneManager.LoadScene("Blockout");
 
         }
 
-
+       //character and camera movement
         moveValue = moveAction.ReadValue<Vector2>() * MoveSpeed * Time.deltaTime;
         rotateValue = rotateAction.ReadValue<Vector2>() * Time.deltaTime * 360;
         rotateValue = Vector2.ClampMagnitude(rotateValue, MouseSensitivity);
@@ -86,6 +90,7 @@ public class MovementController : MonoBehaviour
 
     private void ProcessVerticalMovementInput()
     {
+        //jumping and ground checks
         isGrounded = Physics.CheckSphere(GroundCheck.position, GroundCheckRadius, GroundLayer);
         if (characterController.isGrounded && verticalMovement < 0)
         {
@@ -109,19 +114,21 @@ public class MovementController : MonoBehaviour
                 verticalMovement += jumpForce;
             }
         }
-        
+        //gravity
         verticalMovement += Physics.gravity.y * Time.deltaTime;
         characterController.Move(Vector3.up * verticalMovement * Time.deltaTime);
     }
 
     private void OnDrawGizmos()
     {
+        //draw gizmos
         Gizmos.color = new Vector4(0, 1, 1, 0.5f);
         Gizmos.DrawSphere(transform.position, 0.5f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        //collecting eggs and adding score
         OnEggTouch.Invoke();
         MyManager.Instance.AddScore();
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class DoorOpen : MonoBehaviour
 {
 
+    //destroys the door (wow!)
     public void OnDestroy()
     {
 
