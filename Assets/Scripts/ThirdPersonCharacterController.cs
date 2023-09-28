@@ -8,12 +8,14 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonCharacterController : MonoBehaviour
 {
+    public Camera playerCamera;
+
     public float moveMaxSpeed = 5;
     public float moveAcceleration = 10;
     public float playerHealth = 5;
-
     public float jumpSpeed = 1;
     public float jumpMaxTime = 0.2f;
+
     private float jumpTimer = 0;
 
     private bool jumpInputPressed = false;
@@ -46,7 +48,11 @@ public class ThirdPersonCharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, moveInput * moveMaxSpeed, Time.deltaTime * moveAcceleration);
+        Vector3 cameraSpaceMovement = new Vector3(moveInput.x, 0, moveInput.y);
+        cameraSpaceMovement = playerCamera.transform.TransformDirection(cameraSpaceMovement);
+        Vector2 cameraHorizontalMovement = new Vector2(cameraSpaceMovement.x, cameraSpaceMovement.z);
+
+        currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, cameraHorizontalMovement * moveMaxSpeed, Time.deltaTime * moveAcceleration);
         Vector3 currentVelocity = new Vector3(currentHorizontalVelocity.x, currentVerticalVelocity, currentHorizontalVelocity.y);
         //gravity
         if (isJumping == false)
@@ -71,7 +77,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
         //direction facing
         Vector3 horizontalDirection = Vector3.Scale(currentVelocity, new Vector3(1, 0, 1));
-        if (currentVelocity.magnitude > 0.0001)
+        if (horizontalDirection.magnitude > 0.0001)
         {
             Quaternion newDirection = Quaternion.LookRotation(horizontalDirection.normalized);
             transform.rotation = Quaternion.Slerp(transform.rotation, newDirection, Time.deltaTime * moveAcceleration);
@@ -113,7 +119,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
     }
 
 
-    public void OnAttack(InputValue value)
+    public void OnSize(InputValue value)
     {
         //I am making the "attack" a change in the player's size.
         attackInputPressed = value.Get<float>() > 0;
