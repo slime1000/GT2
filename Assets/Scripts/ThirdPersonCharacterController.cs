@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 
 [RequireComponent(typeof(CharacterController))]
@@ -15,6 +16,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
     public float playerHealth = 5;
     public float jumpSpeed = 1;
     public float jumpMaxTime = 0.2f;
+    public TextMeshProUGUI pauseText;
 
     private float jumpTimer = 0;
 
@@ -22,6 +24,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
     private bool isJumping = false;
     private bool attackInputPressed = false;
     public bool isShrunk = false;
+    public bool isPaused = false;
 
     private GameObject player;
 
@@ -37,6 +40,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     private void Awake()
     {
+        pauseText.enabled = false;
         //setting player gameobject for scale
         player = this.gameObject;
         scaleChangeSmall = new Vector3(0.5f, 0.5f, 0.5f);
@@ -48,6 +52,22 @@ public class ThirdPersonCharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused == false)
+            {
+                isPaused = true;
+                pauseText.enabled = true;
+                Time.timeScale = 0;
+
+            }
+            else if (isPaused == true)
+            {
+                isPaused = false;
+                pauseText.enabled = false;
+                Time.timeScale = 1;
+            }
+        }
         Vector3 cameraSpaceMovement = new Vector3(moveInput.x, 0, moveInput.y);
         cameraSpaceMovement = playerCamera.transform.TransformDirection(cameraSpaceMovement);
         Vector2 cameraHorizontalMovement = new Vector2(cameraSpaceMovement.x, cameraSpaceMovement.z);
