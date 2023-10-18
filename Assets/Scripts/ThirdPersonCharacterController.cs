@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
-
+using System.Runtime.InteropServices;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonCharacterController : MonoBehaviour
@@ -17,6 +17,11 @@ public class ThirdPersonCharacterController : MonoBehaviour
     public float jumpSpeed = 1;
     public float jumpMaxTime = 0.2f;
     public TextMeshProUGUI pauseText;
+    public TextMeshProUGUI healthText;
+    public GameObject continueButton;
+    public GameObject menuButton;
+    public ParticleSystem growPart;
+    public ParticleSystem hurtPart;
 
     private float jumpTimer = 0;
 
@@ -40,7 +45,11 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     private void Awake()
     {
+        //disables pause ui
         pauseText.enabled = false;
+        menuButton.SetActive(false);
+        continueButton.SetActive(false);
+        
         //setting player gameobject for scale
         player = this.gameObject;
         scaleChangeSmall = new Vector3(0.5f, 0.5f, 0.5f);
@@ -52,35 +61,51 @@ public class ThirdPersonCharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //health text update
+        healthText.text = playerHealth.ToString();
+        
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused == false)
             {
+                //pauses and enables text
                 isPaused = true;
                 pauseText.enabled = true;
+                continueButton.SetActive (true);
+                menuButton.SetActive (true);
                 Time.timeScale = 0;
 
             }
             else if (isPaused == true)
             {
+                //unpauses and disables text
                 isPaused = false;
                 pauseText.enabled = false;
+                menuButton.SetActive (false);
+                continueButton.SetActive(false);
                 Time.timeScale = 1;
             }
         }
+
         Vector3 cameraSpaceMovement = new Vector3(moveInput.x, 0, moveInput.y);
         cameraSpaceMovement = playerCamera.transform.TransformDirection(cameraSpaceMovement);
+        //finds current horizontal movement
         Vector2 cameraHorizontalMovement = new Vector2(cameraSpaceMovement.x, cameraSpaceMovement.z);
 
+        //finds horizontal movement
         currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, cameraHorizontalMovement * moveMaxSpeed, Time.deltaTime * moveAcceleration);
+        //sets current movement to the found horizontal and vertical
         Vector3 currentVelocity = new Vector3(currentHorizontalVelocity.x, currentVerticalVelocity, currentHorizontalVelocity.y);
         //gravity
         if (isJumping == false)
         {
+            //sets gravity when jumping
             currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
 
             if (characterController.isGrounded && currentVerticalVelocity < 0)
             {
+                //stops gravity when grounded
                   currentVerticalVelocity = Physics.gravity.y * Time.deltaTime; 
             }
         }
@@ -103,7 +128,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, newDirection, Time.deltaTime * moveAcceleration);
         }
 
-
+        //moves the character accordingly
         characterController.Move(currentVelocity * Time.deltaTime);
     }
 
@@ -120,6 +145,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
         if (jumpInputPressed)
         {
+            //if they are grounded, allow jump
             if (characterController.isGrounded)
             {
                 isJumping = true;
@@ -133,6 +159,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
         {
             if (isJumping)
             {
+                //do not jump if in air
                 isJumping = false;
             }
         }
@@ -141,22 +168,31 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
     public void OnSize(InputValue value)
     {
-        //I am making the "attack" a change in the player's size.
+        //This is not an attack, but it started as one so that is why some of my variables are named strangely.
         attackInputPressed = value.Get<float>() > 0;
+        //checks ability input
        if(attackInputPressed)
         {
             Debug.Log("pressed!");
             if(isShrunk == false)
             {
+                //play particle
+                growPart.Play();
+                //if player is big, makes them small, and lowers their jump power
                 player.transform.localScale = scaleChangeSmall;
                 Debug.Log("shrunk!");
                 isShrunk = true;
+                jumpSpeed = 2f;
             }
             else if(isShrunk == true)
             {
+                //playparticle
+                growPart.Play();
+                //if player is small, resets size and makes jump normal
                 player.transform.localScale = scaleChangeBig;
                 Debug.Log("big!");
                 isShrunk = false;
+                jumpSpeed = 3f;
             }
         }
        
@@ -166,16 +202,29 @@ public class ThirdPersonCharacterController : MonoBehaviour
 
 	private void OnTriggerEnter(Collider collision)
 	{
-        //taking damage and restarting
+        //taking damage
         if (collision.gameObject.tag == "enemy")
         {
+            //plays blood particle
+            hurtPart.Play();
             playerHealth = playerHealth-1;
             Debug.Log("hit!");
         }
         if (playerHealth <= 0)
         {
+            //reset scene on death
             SceneManager.LoadScene("3D");
         }
 	}
+
+    public void unpause()
+    {
+        //for continue button. same as unpause earlier, just in a function.
+        isPaused = false;
+        pauseText.enabled = false;
+        menuButton.SetActive(false);
+        continueButton.SetActive(false);
+        Time.timeScale = 1;
+    }
 
 }
